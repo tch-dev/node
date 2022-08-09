@@ -1,0 +1,17 @@
+version: "3"
+services:
+
+  tch-node:
+    image: domecloud/tch-node
+    command:
+      - "geth"
+      - "--datadir=/datadir"
+      - "--genesis=/datadir/genesis.json"
+      - "--miner.gasprice=20000000000"
+      - "--bootnodes=enode://d380b2fd5b77b45be2b7ab16c9c4022f4ef742fa692800be5c0c90e3a9a1726a051d65c3824cb4ababb094106db7759d8110b437263c0572573954780a8002ac@94.130.222.145:40303"
+      - "--syncmode=fast"
+      - "--networkid=702"
+    volumes:
+      - "./genesis.json:/datadir/genesis.json"
+      - "./datadir/node_1:/datadir/geth"
+    restart: always
