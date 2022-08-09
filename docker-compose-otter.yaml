@@ -1,0 +1,39 @@
+version: "3"
+services:
+
+  tch-erigon:
+    image: domecloud/tch-node-otter
+    entrypoint: /root/init-script.sh
+    command:
+      - "--datadir=/datadir/erigon"
+      - "--bootnodes=enode://d380b2fd5b77b45be2b7ab16c9c4022f4ef742fa692800be5c0c90e3a9a1726a051d65c3824cb4ababb094106db7759d8110b437263c0572573954780a8002ac@94.130.222.145:40303"
+      - "--networkid=703"
+      - "--private.api.addr=0.0.0.0:9090"
+      - "--http=false"
+    volumes:
+      - "./genesis.json:/datadir/genesis.json"
+      - "./datadir/erigon:/datadir/erigon"
+      - "./init-script.sh:/root/init-script.sh"
+    restart: always
+
+  rpc-node:
+    image: domecloud/tch-node-otter
+    depends_on:
+      - tch-erigon
+    command:
+      - "rpcdaemon"
+      - "--datadir=/datadir/erigon"
+      - "--http.api=eth,engine,erigon,web3,net,debug,trace,txpool,ots"
+      - "--private.api.addr=tch-erigon:9090"
+      - "--http.corsdomain=*"
+      - "--http.addr=0.0.0.0"
+      - " --http.vhosts=*"
+      - "--http.corsdomain=*"
+      - "--ws"
+     # - "--authrpc.jwtsecret=/datadir/erigon/jwt.hex"
+    ports: 
+      -  "8545:8545" 
+      -  "8546:8546"
+    volumes:
+      - "./datadir/erigon:/datadir/erigon"
+
